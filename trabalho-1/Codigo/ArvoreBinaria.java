@@ -3,7 +3,6 @@ package Codigo;
 public class ArvoreBinaria {
     No raiz;
 
-    // Inserção 
     No inserir(No no, int valor) {
         if (no == null) {
             System.out.println(" Inserindo nó " + valor);
@@ -21,15 +20,16 @@ public class ArvoreBinaria {
             return no;
         }
 
-        // Atualizar altura e FB
+        // Primeiro atualiza altura e fator de balanceamento
         no.altura = 1 + Math.max(altura(no.filhoEsq), altura(no.filhoDir));
         no.fb = fatorBalanceamento(no);
 
         System.out.println("Nó " + no.valor + " atualizado | Altura: " + no.altura + " | FB: " + no.fb);
 
-        // Balancear
-        return balancear(no, valor);
+        // Balanceia após atualizar os filhos
+        return balancear(no);
     }
+
 
     int altura(No no) {
         return (no == null) ? 0 : no.altura;
@@ -40,36 +40,36 @@ public class ArvoreBinaria {
         return altura(no.filhoEsq) - altura(no.filhoDir);
     }
 
-   No balancear(No no, int valor) {
+    No balancear(No no) {
     // Caso Esquerda-Esquerda
-    if (no.fb > 1 && valor < no.filhoEsq.valor) {
-        System.out.println(" Desbalanceio em " + no.valor + " (Esquerda-Esquerda) → Rotação à direita");
-        return rotacaoDireita(no); // retorna já balanceado
-    }
+        if (no.fb > 1 && fatorBalanceamento(no.filhoEsq) >= 0) {
+            System.out.println(" Desbalanceio em " + no.valor + " (Esquerda-Esquerda) Rotação à direita");
+            return rotacaoDireita(no);
+        }
 
-    // Caso Direita-Direita
-    if (no.fb < -1 && valor > no.filhoDir.valor) {
-        System.out.println(" Desbalanceio em " + no.valor + " (Direita-Direita) → Rotação à esquerda");
-        return rotacaoEsquerda(no);
-    }
+        // Caso Direita-Direita
+        if (no.fb < -1 && fatorBalanceamento(no.filhoDir) <= 0) {
+            System.out.println(" Desbalanceio em " + no.valor + " (Direita-Direita) Rotação à esquerda");
+            return rotacaoEsquerda(no);
+        }
 
-    // Caso Esquerda-Direita
-    if (no.fb > 1 && valor > no.filhoEsq.valor) {
-        System.out.println(" Desbalanceio em " + no.valor + " (Esquerda-Direita) → Rotação dupla (Esquerda + Direita)");
-        no.filhoEsq = rotacaoEsquerda(no.filhoEsq);
-        return rotacaoDireita(no);
-    }
+        // Caso Esquerda-Direita
+        if (no.fb > 1 && fatorBalanceamento(no.filhoEsq) < 0) {
+            System.out.println(" Desbalanceio em " + no.valor + " (Esquerda-Direita) Rotação dupla (Esquerda + Direita)");
+            no.filhoEsq = rotacaoEsquerda(no.filhoEsq);
+            return rotacaoDireita(no);
+        }
 
-    // Caso Direita-Esquerda
-    if (no.fb < -1 && valor < no.filhoDir.valor) {
-        System.out.println(" Desbalanceio em " + no.valor + " (Direita-Esquerda) → Rotação dupla (Direita + Esquerda)");
-        no.filhoDir = rotacaoDireita(no.filhoDir);
-        return rotacaoEsquerda(no);
-    }
+        // Caso Direita-Esquerda
+        if (no.fb < -1 && fatorBalanceamento(no.filhoDir) > 0) {
+            System.out.println(" Desbalanceio em " + no.valor + " (Direita-Esquerda) Rotação dupla (Direita + Esquerda)");
+            no.filhoDir = rotacaoDireita(no.filhoDir);
+            return rotacaoEsquerda(no);
+        }
 
-    // Se não está desbalanceado, apenas retorna
     return no;
 }
+
 
     No rotacaoDireita(No y) {
         System.out.println("Rotação à direita em " + y.valor);
